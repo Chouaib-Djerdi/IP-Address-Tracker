@@ -14,6 +14,44 @@ let myIcon = L.icon({
   popupAnchor: [-3, -76],
 });
 
+const init = function () {
+  if (navigator.geolocation)
+    navigator.geolocation.getCurrentPosition(loadMap.bind(this), function () {
+      alert("Location not Permitted");
+    });
+
+  getClientIP();
+};
+
+const getClientIP = async function () {
+  const ip = await fetch("https://api.ipify.org?format=json");
+  const ipJson = await ip.json();
+  const resIp = await fetch(
+    `https://geo.ipify.org/api/v2/country?apiKey=at_fpPtKzdeBNmviTWhg3aJwipTYZ7vR&ipAddress=${ipJson.ip}`
+  );
+  const resIpJson = await resIp.json();
+  outputData(resIpJson);
+};
+
+const loadMap = function (position) {
+  console.log(position);
+  const { latitude } = position.coords;
+  const { longitude } = position.coords;
+
+  const coords = [latitude, longitude];
+  let map = L.map("map", {
+    preferCanvas: true,
+  }).setView(coords, 13);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map);
+  let marker = L.marker(coords, { icon: myIcon }).addTo(map);
+};
+
+init();
+
 const outputData = function (data) {
   ip_output.textContent = data.ip;
   location_output.textContent = data.location.region;
@@ -51,13 +89,3 @@ const getLatLng = async function (country) {
 };
 
 btn.addEventListener("click", getCountrybyIP);
-
-// let map = L.map("map", {
-//   preferCanvas: true,
-// }).setView([51.505, -0.09], 13);
-// L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-//   maxZoom: 19,
-//   attribution:
-//     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-// }).addTo(map);
-// let marker = L.marker([51.505, -0.09], { icon: myIcon }).addTo(map);
