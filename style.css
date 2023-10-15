@@ -98,6 +98,9 @@ button {
     justify-content: center;
     align-items: center;
   }
+  #map {
+    height: 80vh;
+  }
 }
 
 @media (max-width: 610px) {
@@ -106,5 +109,8 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+  }
+  #map {
+    height: 80vh;
   }
 }
